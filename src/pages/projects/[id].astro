@@ -1,0 +1,87 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ModelViewer from "../../components/ModelViewer.astro";
+import { Image } from "astro:assets";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { title, summary, date, tags, cover, gallery, video, model, modelPoster, links } = project.data;
+const { Content } = await render(project);
+---
+
+<Layout title={title} description={summary}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a href="/projects" class="font-mono text-sm hover:underline" style="color: var(--accent);">&larr; All projects</a>
+
+    <p class="mt-6 font-mono text-xs" style="color: var(--ink-faint);">
+      {date.toLocaleDateString("en-US", { year: "numeric", month: "long" })}
+    </p>
+    <h1 class="mt-2 text-3xl font-bold sm:text-4xl" style="color: var(--ink);">{title}</h1>
+    <p class="mt-4 text-lg" style="color: var(--ink-soft);">{summary}</p>
+
+    <div class="mt-4 flex flex-wrap gap-1.5">
+      {tags.map((tag) => (
+        <span class="rounded-full px-2 py-0.5 font-mono text-[11px]" style="background-color: var(--accent-soft); color: var(--accent-ink);">
+          {tag}
+        </span>
+      ))}
+    </div>
+
+    {links && (links.github || links.demo || links.paper) && (
+      <div class="mt-6 flex flex-wrap gap-4 font-mono text-sm">
+        {links.github && <a href={links.github} target="_blank" rel="noreferrer" class="hover:underline" style="color: var(--accent);">Code &rarr;</a>}
+        {links.demo && <a href={links.demo} target="_blank" rel="noreferrer" class="hover:underline" style="color: var(--accent);">Demo &rarr;</a>}
+        {links.paper && <a href={links.paper} target="_blank" rel="noreferrer" class="hover:underline" style="color: var(--accent);">Related Paper &rarr;</a>}
+      </div>
+    )}
+
+    {cover && (
+      <div class="mt-10 overflow-hidden rounded-lg border" style="border-color: var(--line);">
+        <Image src={cover} alt={title} widths={[600, 1200]} sizes="(max-width: 768px) 100vw, 768px" />
+      </div>
+    )}
+
+    {model && (
+      <div class="mt-10">
+        <h2 class="mb-3 font-mono text-xs font-semibold uppercase tracking-wider" style="color: var(--ink-faint);">
+          Interactive 3D Model &mdash; drag to rotate, scroll to zoom
+        </h2>
+        <ModelViewer src={model} poster={modelPoster} alt={title} />
+      </div>
+    )}
+
+    {video && (
+      <div class="mt-10 aspect-video overflow-hidden rounded-lg border" style="border-color: var(--line);">
+        <iframe
+          src={video}
+          class="h-full w-full"
+          title={`${title} video`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    )}
+
+    <div class="prose-body mt-10">
+      <Content />
+    </div>
+
+    {gallery && gallery.length > 0 && (
+      <div class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        {gallery.map((img) => (
+          <div class="overflow-hidden rounded-lg border" style="border-color: var(--line);">
+            <Image src={img} alt={title} widths={[300, 600]} sizes="300px" />
+          </div>
+        ))}
+      </div>
+    )}
+  </article>
+</Layout>

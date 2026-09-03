@@ -1,0 +1,28 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Layout title="Projects" description="Mechanical and robotics engineering projects.">
+  <section class="mx-auto max-w-5xl px-6 py-16">
+    <h1 class="text-3xl font-bold" style="color: var(--ink);">Projects</h1>
+    <p class="mt-2 max-w-xl" style="color: var(--ink-soft);">
+      Hardware, robotics, and mechanical design work — from concept through CAD to build and test.
+    </p>
+
+    {projects.length === 0 ? (
+      <p class="mt-10 font-mono text-sm" style="color: var(--ink-faint);">
+        No projects yet. Add Markdown files to src/content/projects/ — see CONTENT_GUIDE.md.
+      </p>
+    ) : (
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {projects.map((project) => <ProjectCard project={project} />)}
+      </div>
+    )}
+  </section>
+</Layout>

@@ -1,0 +1,35 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site.config";
+
+const paragraphs = site.about.trim().split(/\n\s*\n/);
+---
+
+<Layout title="About" description={`About ${site.name}`}>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-bold" style="color: var(--ink);">About</h1>
+
+    <div class="prose-body mt-6 flex flex-col gap-4 text-base">
+      {paragraphs.map((p) => <p>{p}</p>)}
+    </div>
+
+    <h2 class="mt-12 mb-4 font-mono text-xs font-semibold uppercase tracking-wider" style="color: var(--ink-faint);">
+      Skills &amp; Tools
+    </h2>
+    <div class="flex flex-wrap gap-2">
+      {site.skills.map((skill) => (
+        <span class="rounded-full border px-3 py-1 font-mono text-sm" style="border-color: var(--line); color: var(--ink-soft);">
+          {skill}
+        </span>
+      ))}
+    </div>
+
+    <h2 class="mt-12 mb-4 font-mono text-xs font-semibold uppercase tracking-wider" style="color: var(--ink-faint);">
+      Contact
+    </h2>
+    <div class="flex flex-wrap gap-4 font-mono text-sm">
+      <a href={`mailto:${site.email}`} class="hover:underline" style="color: var(--accent);">{site.email}</a>
+      <a href={site.resumeHref} class="hover:underline" style="color: var(--accent);">Download Resume</a>
+    </div>
+  </section>
+</Layout>

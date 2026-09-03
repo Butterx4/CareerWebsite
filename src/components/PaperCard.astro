@@ -1,0 +1,49 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  paper: CollectionEntry<"papers">;
+}
+
+const { paper } = Astro.props;
+const { title, authors, venue, date, abstract, pdf, doi, arxiv, tags } = paper.data;
+---
+
+<article class="flex flex-col gap-3 rounded-lg border p-6" style="border-color: var(--line); background-color: var(--bg-alt);">
+  <div class="flex flex-wrap items-baseline justify-between gap-2">
+    <h3 class="text-lg font-semibold" style="color: var(--ink);">{title}</h3>
+    <span class="font-mono text-xs" style="color: var(--ink-faint);">
+      {date.toLocaleDateString("en-US", { year: "numeric", month: "short" })}
+    </span>
+  </div>
+  <p class="font-mono text-xs" style="color: var(--ink-soft);">
+    {authors.join(", ")} &middot; <span style="color: var(--accent-ink);">{venue}</span>
+  </p>
+  <p class="text-sm" style="color: var(--ink-soft);">{abstract}</p>
+  <div class="flex flex-wrap items-center gap-4 pt-1">
+    {pdf && (
+      <a href={pdf} target="_blank" rel="noreferrer" class="font-mono text-sm font-semibold hover:underline" style="color: var(--accent);">
+        PDF &rarr;
+      </a>
+    )}
+    {doi && (
+      <a href={doi} target="_blank" rel="noreferrer" class="font-mono text-sm font-semibold hover:underline" style="color: var(--accent);">
+        DOI &rarr;
+      </a>
+    )}
+    {arxiv && (
+      <a href={arxiv} target="_blank" rel="noreferrer" class="font-mono text-sm font-semibold hover:underline" style="color: var(--accent);">
+        arXiv &rarr;
+      </a>
+    )}
+  </div>
+  {tags.length > 0 && (
+    <div class="flex flex-wrap gap-1.5 pt-1">
+      {tags.map((tag) => (
+        <span class="rounded-full px-2 py-0.5 font-mono text-[11px]" style="background-color: var(--accent-soft); color: var(--accent-ink);">
+          {tag}
+        </span>
+      ))}
+    </div>
+  )}
+</article>
